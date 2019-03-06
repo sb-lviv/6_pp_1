@@ -13,9 +13,9 @@ class Matrix(object):
     # ]
 
     M = [
-        [1, 1, 1, 12],
-        [3, -2, 1, 6],
-        [4, -1, 2, 18],
+        [2, 1, -1, 8],
+        [-3, -1, 2, -11],
+        [-2, 1, 2, -3],
     ]
     """ fixme """
     """
@@ -41,22 +41,23 @@ class Matrix(object):
         [3, -2, 1, 6],
     ]
     """
-    def __init__(self):
+    def __init__(self, verbose=True):
         # self.fill()
+        self.verbose = verbose
         print(self)
         self.simplify()
         print(self)
 
     def simplify(self):
         self.gauss()
-        print(self)
+        self.print()
         self.reverse()
-        print(self)
+        self.print()
         self.gauss()
-        print(self)
+        self.print()
         for i, eq in enumerate(self.M):
             self.M[i][:] = self.normalize(eq, i)
-        print(self)
+        self.print()
         self.reverse()
 
     def gauss(self):
@@ -95,6 +96,10 @@ class Matrix(object):
     def normalize(equation, position):
         k = 1 / equation[position]
         return [x * k for x in equation]
+
+    def print(self):
+        if self.verbose:
+            print(self)
 
     def __str__(self):
         matrix = []
