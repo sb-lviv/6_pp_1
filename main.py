@@ -29,7 +29,7 @@ class Matrix(object):
     """
     M = [
         [3, 3, 3, 36],
-        [-1, 1, -1, -4],
+        [-2, 1, -1, -7],
         [1, -1, 2, 9],
         [-3, -2, 1, -12],
     ]
@@ -41,34 +41,39 @@ class Matrix(object):
         [3, -2, 1, 6],
     ]
     """
-    def __init__(self, verbose=True):
-        # self.fill()
-        self.verbose = verbose
+
+    def __init__(self):
+        self.fill()
         print(self)
-        self.simplify()
+        self.run()
         print(self)
 
-    def simplify(self):
+    def run(self):
         if len(self.M) >= len(self.M[0]):
-            self.M[:] = self.M[:len(self.M[0]) - 1]
+            self.M = self.M[:len(self.M[0]) - 1]
         self.gauss()
-        self.print()
-        self.reverse()
-        self.print()
-        self.gauss()
-        self.print()
-        for i, eq in enumerate(self.M):
-            self.M[i][:] = self.normalize(eq, i)
-        self.print()
-        self.reverse()
 
     def gauss(self):
+        self.forward()
+        self.backward()
+
+    def forward(self):
         for i, equation in enumerate(self.M[:-1]):
             for j, operated in enumerate(self.M[i + 1:], i + 1):
                 k = operated[i] / equation[i]
-                self.M[j][:] = [op - eq * k
-                                for eq, op
-                                in zip(equation, operated)]
+                self.M[j][:] = map(
+                    lambda eq, op: op - eq * k,
+                    equation,
+                    operated)
+
+    def backward(self):
+        for i, equation in reversed(list(enumerate(self.M[1:], 1))):
+            for j, operated in enumerate(self.M[:i]):
+                k = operated[i] / equation[i]
+                self.M[j][:] = map(
+                    lambda eq, op: op - eq * k,
+                    equation,
+                    operated)
 
     def reverse(self):
         self.reverse_h()
@@ -76,10 +81,10 @@ class Matrix(object):
 
     def reverse_h(self):
         for i, equation in enumerate(self.M):
-            self.M[i][:] = equation[-2::-1] + equation[-1:]
+            self.M[i] = equation[-2::-1] + equation[-1:]
 
     def reverse_v(self):
-        self.M[:] = self.M[::-1]
+        self.M = self.M[::-1]
 
     def fill(self):
         arguments = [randint(-10, 10) for x in range(0, randint(3, 5))]
@@ -99,10 +104,6 @@ class Matrix(object):
         k = 1 / equation[position]
         return [x * k for x in equation]
 
-    def print(self):
-        if self.verbose:
-            print(self)
-
     def __str__(self):
         matrix = []
         for equation in self.M:
@@ -112,5 +113,5 @@ class Matrix(object):
 
 
 if __name__ == '__main__':
-    # for i in range(0, 100):
-    Matrix()
+    for i in range(0, 100):
+        Matrix()
