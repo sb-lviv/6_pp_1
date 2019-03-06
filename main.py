@@ -99,8 +99,8 @@ class Matrix(object):
     def __str__(self):
         matrix = []
         for equation in self.M:
-            lines = ['{:9.3f}'.format(k) for k in equation]
-            matrix.append(' '.join(lines))
+            line = ' '.join(['{:9.3f}'.format(k) for k in equation])
+            matrix.append(line)
         return '\n'.join(matrix) + '\n'
 
 
