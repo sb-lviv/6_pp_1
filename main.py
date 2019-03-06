@@ -49,6 +49,8 @@ class Matrix(object):
         print(self)
 
     def simplify(self):
+        if len(self.M) >= len(self.M[0]):
+            self.M[:] = self.M[:len(self.M[0]) - 1]
         self.gauss()
         self.print()
         self.reverse()
