@@ -56,24 +56,30 @@ class Matrix(object):
     def gauss(self):
         self.forward()
         self.backward()
+        for i in range(0, len(self.M)):
+            self.M[i] = self.normalize(self.M[i], i)
 
     def forward(self):
-        for i, equation in enumerate(self.M[:-1]):
-            for j, operated in enumerate(self.M[i + 1:], i + 1):
-                k = operated[i] / equation[i]
-                self.M[j][:] = map(
+        for equation in range(0, len(self.M) - 1):
+            self.M[equation:] = sorted(self.M[equation:],
+                                       key=lambda x: abs(x[equation]),
+                                       reverse=True)
+            for operated in range(equation + 1, len(self.M)):
+                k = self.M[operated][equation] / self.M[equation][equation]
+                self.M[operated][:] = map(
                     lambda eq, op: op - eq * k,
-                    equation,
-                    operated)
+                    self.M[equation],
+                    self.M[operated])
 
     def backward(self):
-        for i, equation in reversed(list(enumerate(self.M[1:], 1))):
-            for j, operated in enumerate(self.M[:i]):
-                k = operated[i] / equation[i]
-                self.M[j][:] = map(
+        for equation in range(len(self.M) - 1, 0, -1):  # reversed(list(enumerate(self.M[1:], 1))):
+            for operated in range(0, equation):  # enumerate(self.M[:i]):
+                k = self.M[operated][equation] / self.M[equation][equation]
+                self.M[operated][:] = map(
                     lambda eq, op: op - eq * k,
-                    equation,
-                    operated)
+                    self.M[equation],
+                    self.M[operated])
+
 
     def reverse(self):
         self.reverse_h()
