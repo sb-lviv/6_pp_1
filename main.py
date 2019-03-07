@@ -13,10 +13,10 @@ class Matrix(object):
     # ]
 
     M = [
-        [2, 1, -1, 8],
-        [-3, -1, 2, -11],
-        [-2, 1, 2, -3],
+        [1, 1, 1, 12],
+        [3, -2, 1, 6],
     ]
+    args = []
     """ fixme """
     """
     M = [
@@ -87,6 +87,16 @@ class Matrix(object):
             l.append(s)
             matrix.append(l)
         self.M = matrix
+        self.args = arguments
+
+    def get_result(self):
+        return [equation[-1] for equation in self.M]
+
+    def validate(self):
+        for a, b in zip(self.args, self.get_result()):
+            if abs(a - b) > 0.000001:
+                return False
+        return True
 
     @staticmethod
     def normalize(equation, position):
@@ -103,4 +113,4 @@ class Matrix(object):
 
 if __name__ == '__main__':
     for i in range(0, 100):
-        Matrix()
+        print(Matrix().validate())
