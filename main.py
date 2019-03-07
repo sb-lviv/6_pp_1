@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from threading import Thread
-from random import randint
+from random import random, randint
 from functools import reduce
 
 
@@ -17,23 +17,6 @@ class Matrix(object):
         [-3, -1, 2, -11],
         [-2, 1, 2, -3],
     ]
-    """ fixme """
-    """
-    M = [
-        [10, -9, 4, 2],
-        [0, -2, 5, -10],
-        [-7, 2, 4, -15],
-    ]
-    """
-    """ fixme """
-    """
-    M = [
-        [3, 3, 3, 36],
-        [-2, 1, -1, -7],
-        [1, -1, 2, 9],
-        [-3, -2, 1, -12],
-    ]
-    """
     """ fixme """
     """
     M = [
@@ -72,8 +55,8 @@ class Matrix(object):
                     self.M[operated])
 
     def backward(self):
-        for equation in range(len(self.M) - 1, 0, -1):  # reversed(list(enumerate(self.M[1:], 1))):
-            for operated in range(0, equation):  # enumerate(self.M[:i]):
+        for equation in range(len(self.M) - 1, 0, -1):
+            for operated in range(0, equation):
                 k = self.M[operated][equation] / self.M[equation][equation]
                 self.M[operated][:] = map(
                     lambda eq, op: op - eq * k,
@@ -93,12 +76,12 @@ class Matrix(object):
         self.M = self.M[::-1]
 
     def fill(self):
-        arguments = [randint(-10, 10) for x in range(0, randint(3, 5))]
+        arguments = [(random() - 0.5) * 20 for x in range(0, randint(3, 5))]
         print(arguments)
 
         matrix = []
         for arg in arguments:
-            l = [randint(-10, 10) for x in arguments]
+            l = [(random() - 0.5) * 20 for x in arguments]
             s = [arg * k for arg, k in zip(arguments, l)]
             s = reduce((lambda x, y: x + y), s)
             l.append(s)
