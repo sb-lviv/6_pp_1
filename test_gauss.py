@@ -1,9 +1,15 @@
+import pytest
 from Gauss import Matrix
 
 
-def test_simple():
-    Matrix(100).gauss()
+@pytest.fixture
+def M():
+    return Matrix(500)
 
 
-def test_parallel():
-    Matrix(100).gauss_parallel()
+def test_simple(M):
+    M.gauss()
+
+
+def test_parallel(M):
+    M.gauss_parallel()

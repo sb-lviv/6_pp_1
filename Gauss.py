@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from threading import Thread
+import multiprocessing as mp
 from random import random
 from functools import reduce
 
@@ -19,21 +19,17 @@ class Matrix(object):
         self.simplify_column(0, len(self.M))
 
     def gauss_parallel(self):
-        threads = []
+        pool = mp.Pool(self.NUMBER_OF_THREADS)
         length = len(self.M) // self.NUMBER_OF_THREADS
-        for eq in range(0, self.NUMBER_OF_THREADS):
-            threads.append(Thread(target=self.simplify_column,
-                                  args=(eq * length, (eq + 1) * length)))
+        res = [pool.apply_async(self.simplify_column,
+                                (eq * length, (eq + 1) * length))
+               for eq
+               in range(0, self.NUMBER_OF_THREADS)]
 
-        for t in threads:
-            t.start()
-
-        for t in threads:
-            t.join()
+        [r.get() for r in res]
 
     def fill(self, size=5):
         arguments = [(random() - 0.5) * 20 for x in range(0, size)]
-        print(arguments)
 
         matrix = []
         for i in range(0, size):
