@@ -6,81 +6,38 @@ from functools import reduce
 
 class Matrix(object):
 
-    # M = [
-    #     [2, 1, -1, 8],
-    #     [-3, -1, 2, -11],
-    #     [-2, 1, 2, -3],
-    # ]
+    def __init__(self, size=5):
+        self.fill(size)
 
-    M = [
-        [1, 1, 1, 12],
-        [3, -2, 1, 6],
-    ]
-    args = []
-    """ fixme """
-    """
-    M = [
-        [1, 1, 1, 12],
-        [3, -2, 1, 6],
-    ]
-    """
-
-    def __init__(self):
-        self.fill()
-        print(self)
-        self.run()
-        print(self)
-
-    def run(self):
+        # Remove redundant equations.
         if len(self.M) >= len(self.M[0]):
             self.M = self.M[:len(self.M[0]) - 1]
-        self.gauss()
 
     def gauss(self):
-        self.forward()
-        self.backward()
-        for i in range(0, len(self.M)):
-            self.M[i] = self.normalize(self.M[i], i)
+        # Pick an equation.
+        for eq in range(0, len(self.M)):
+            # Compute over all other equations.
+            for op in range(0, len(self.M)):
+                if eq == op:
+                    continue
 
-    def forward(self):
-        for equation in range(0, len(self.M) - 1):
-            self.M[equation:] = sorted(self.M[equation:],
-                                       key=lambda x: abs(x[equation]),
-                                       reverse=True)
-            for operated in range(equation + 1, len(self.M)):
-                k = self.M[operated][equation] / self.M[equation][equation]
-                self.M[operated][:] = map(
-                    lambda eq, op: op - eq * k,
-                    self.M[equation],
-                    self.M[operated])
+                k = self.M[op][eq] / self.M[eq][eq]
+                self.M[op][:] = map(
+                    lambda e, o: o - e * k,
+                    self.M[eq],
+                    self.M[op])
 
-    def backward(self):
-        for equation in range(len(self.M) - 1, 0, -1):
-            for operated in range(0, equation):
-                k = self.M[operated][equation] / self.M[equation][equation]
-                self.M[operated][:] = map(
-                    lambda eq, op: op - eq * k,
-                    self.M[equation],
-                    self.M[operated])
+            self.M[eq][:] = self.normalize(self.M[eq], eq)
 
+    def gauss_parallel(self):
+        raise NotImplementedError
 
-    def reverse(self):
-        self.reverse_h()
-        self.reverse_v()
-
-    def reverse_h(self):
-        for i, equation in enumerate(self.M):
-            self.M[i] = equation[-2::-1] + equation[-1:]
-
-    def reverse_v(self):
-        self.M = self.M[::-1]
-
-    def fill(self):
-        arguments = [(random() - 0.5) * 20 for x in range(0, randint(3, 5))]
+    def fill(self, size=5):
+        arguments = [(random() - 0.5) * 20 for x in range(0, size)]
         print(arguments)
 
         matrix = []
-        for arg in arguments:
+        for i in range(0, size):
             l = [(random() - 0.5) * 20 for x in arguments]
             s = [arg * k for arg, k in zip(arguments, l)]
             s = reduce((lambda x, y: x + y), s)
@@ -112,5 +69,8 @@ class Matrix(object):
 
 
 if __name__ == '__main__':
-    for i in range(0, 100):
-        print(Matrix().validate())
+    # for i in range(0, 100):
+    a = Matrix(size=10)
+    print(a)
+    a.gauss()
+    print(a)
