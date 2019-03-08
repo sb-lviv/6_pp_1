@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 from threading import Thread
-from random import random, randint
+from random import random
 from functools import reduce
 
 
 class Matrix(object):
+
+    NUMBER_OF_THREADS = 4
 
     def __init__(self, size=5):
         self.fill(size)
@@ -14,16 +16,14 @@ class Matrix(object):
             self.M = self.M[:len(self.M[0]) - 1]
 
     def gauss(self):
-        # Pick an equation.
-        for eq in range(0, len(self.M)):
-            # Compute over all other equations.
-            self.simplify_column(eq)
+        self.simplify_column(0, len(self.M))
 
     def gauss_parallel(self):
         threads = []
-        length = len(self.M)
-        for eq in range(0, length):
-            threads.append(Thread(target=self.simplify_column, args=(eq, )))
+        length = len(self.M) // self.NUMBER_OF_THREADS
+        for eq in range(0, self.NUMBER_OF_THREADS):
+            threads.append(Thread(target=self.simplify_column,
+                                  args=(eq * length, (eq + 1) * length)))
 
         for t in threads:
             t.start()
@@ -59,18 +59,21 @@ class Matrix(object):
         k = 1 / equation[position]
         return [x * k for x in equation]
 
-    def simplify_column(self, eq):
-        for op in range(0, len(self.M)):
-            if eq == op:
-                continue
+    def simplify_column(self, start, end):
+        # Pick an equation.
+        for eq in range(start, end):
+            # Compute over all other equations.
+            for op in range(0, len(self.M)):
+                if eq == op:
+                    continue
 
-            k = self.M[op][eq] / self.M[eq][eq]
-            self.M[op][:] = map(
-                lambda e, o: o - e * k,
-                self.M[eq],
-                self.M[op])
+                k = self.M[op][eq] / self.M[eq][eq]
+                self.M[op][:] = map(
+                    lambda e, o: o - e * k,
+                    self.M[eq],
+                    self.M[op])
 
-        self.M[eq][:] = self.normalize(self.M[eq], eq)
+            self.M[eq][:] = self.normalize(self.M[eq], eq)
 
     def __str__(self):
         matrix = []
@@ -81,8 +84,8 @@ class Matrix(object):
 
 
 if __name__ == '__main__':
-    # for i in range(0, 100):
     a = Matrix(size=10)
     print(a)
     a.gauss()
+    # a.gauss_parallel()
     print(a)
