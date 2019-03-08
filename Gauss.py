@@ -17,20 +17,19 @@ class Matrix(object):
         # Pick an equation.
         for eq in range(0, len(self.M)):
             # Compute over all other equations.
-            for op in range(0, len(self.M)):
-                if eq == op:
-                    continue
-
-                k = self.M[op][eq] / self.M[eq][eq]
-                self.M[op][:] = map(
-                    lambda e, o: o - e * k,
-                    self.M[eq],
-                    self.M[op])
-
-            self.M[eq][:] = self.normalize(self.M[eq], eq)
+            self.simplify_column(eq)
 
     def gauss_parallel(self):
-        raise NotImplementedError
+        threads = []
+        length = len(self.M)
+        for eq in range(0, length):
+            threads.append(Thread(target=self.simplify_column, args=(eq, )))
+
+        for t in threads:
+            t.start()
+
+        for t in threads:
+            t.join()
 
     def fill(self, size=5):
         arguments = [(random() - 0.5) * 20 for x in range(0, size)]
@@ -59,6 +58,19 @@ class Matrix(object):
     def normalize(equation, position):
         k = 1 / equation[position]
         return [x * k for x in equation]
+
+    def simplify_column(self, eq):
+        for op in range(0, len(self.M)):
+            if eq == op:
+                continue
+
+            k = self.M[op][eq] / self.M[eq][eq]
+            self.M[op][:] = map(
+                lambda e, o: o - e * k,
+                self.M[eq],
+                self.M[op])
+
+        self.M[eq][:] = self.normalize(self.M[eq], eq)
 
     def __str__(self):
         matrix = []
