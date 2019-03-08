@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import multiprocessing as mp
-from random import random
+from random import uniform as random
 from functools import reduce
 
 
@@ -28,12 +28,12 @@ class Matrix(object):
 
         [r.get() for r in res]
 
-    def fill(self, size=5):
-        arguments = [(random() - 0.5) * 20 for x in range(0, size)]
+    def fill(self, size=5, num_range=(-10, 10)):
+        arguments = [random(*num_range) for x in range(0, size)]
 
         matrix = []
         for i in range(0, size):
-            l = [(random() - 0.5) * 20 for x in arguments]
+            l = [random(*num_range) for x in arguments]
             s = [arg * k for arg, k in zip(arguments, l)]
             s = reduce((lambda x, y: x + y), s)
             l.append(s)
@@ -81,6 +81,7 @@ class Matrix(object):
 
 if __name__ == '__main__':
     a = Matrix(size=10)
+    print(a.args)
     print(a)
     a.gauss()
     # a.gauss_parallel()
