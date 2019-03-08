@@ -8,8 +8,8 @@ class Matrix(object):
 
     NUMBER_OF_THREADS = 4
 
-    def __init__(self, size=5):
-        self.fill(size)
+    def __init__(self, size=5, num_range=(-10, 10)):
+        self.fill(size=size, num_range=num_range)
 
         # Remove redundant equations.
         if len(self.M) >= len(self.M[0]):
@@ -28,7 +28,7 @@ class Matrix(object):
 
         [r.get() for r in res]
 
-    def fill(self, size=5, num_range=(-10, 10)):
+    def fill(self, size, num_range):
         arguments = [random(*num_range) for x in range(0, size)]
 
         matrix = []
